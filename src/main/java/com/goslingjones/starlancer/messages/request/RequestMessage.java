@@ -1,19 +1,25 @@
 package com.goslingjones.starlancer.messages.request;
 
-import com.goslingjones.starlancer.authentication.AuthenticationMethod;
-
 public class RequestMessage {
+
+	RequestHeader requestHeader;
+	RequestBody requestBody;
 	
-	AuthenticationMethod authenticationMethod;
-	RequestMethod requestMethod;
-	
-	public RequestMessage(AuthenticationMethod authenticationMethod, RequestMethod requestMethod) {
-		this.authenticationMethod = authenticationMethod;
-		this.requestMethod = requestMethod;
+	public RequestMessage(RequestHeader requestHeader, RequestBody requestBody) {
+		this.requestHeader = requestHeader;
+		this.requestBody = requestBody;
 	}
 	
 	public RequestMethod getRequestMethod() {
-		return requestMethod;
+		return this.requestHeader.getRequestMethod();
+	}
+
+	public RequestHeader getRequestHeader() {
+		return requestHeader;
+	}
+
+	public RequestBody getRequestBody() {
+		return requestBody;
 	}
 
 }

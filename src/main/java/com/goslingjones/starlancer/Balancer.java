@@ -7,6 +7,7 @@ import java.util.List;
 import com.goslingjones.starlancer.client.Client;
 import com.goslingjones.starlancer.log.Log;
 import com.goslingjones.starlancer.messages.request.RequestMessage;
+import com.goslingjones.starlancer.messages.response.ResponseMessage;
 import com.goslingjones.starlancer.strategy.Strategy;
 
 public class Balancer {
@@ -32,20 +33,21 @@ public class Balancer {
 	 * Sends a request to a server based on the strategy
 	 * 
 	 * @param connection
+	 * @return ResponseMessage
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public void sendRequest(RequestMessage requestMessage) throws IOException, InterruptedException {
+	public ResponseMessage sendRequest(RequestMessage requestMessage) throws IOException, InterruptedException {
 		Server server = strategy.getServer(servers);
 
 		Log.add("[Selected Server] " + server.getName());
 
-		int responseCode = Client.sendRequest(requestMessage, server.getUrl());
-
-		Log.add("[Response Code] " + responseCode);
+		ResponseMessage responseMessage = Client.sendRequest(requestMessage, server.getUrl());
 
 		if (! activeServers.contains(server)) {
 			activeServers.add(server);
 		}
+
+		return responseMessage;
 	}
 }
