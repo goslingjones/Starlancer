@@ -1,9 +1,12 @@
 package com.goslingjones.starlancer;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.goslingjones.starlancer.client.Client;
 import com.goslingjones.starlancer.log.Log;
+import com.goslingjones.starlancer.messages.request.RequestMessage;
 import com.goslingjones.starlancer.strategy.Strategy;
 
 public class Balancer {
@@ -26,23 +29,23 @@ public class Balancer {
 	}
 	
 	/**
-	 * Opens a connection to a server based on the strategy
+	 * Sends a request to a server based on the strategy
 	 * 
 	 * @param connection
+	 * @throws InterruptedException
+	 * @throws IOException
 	 */
-	public void openConnection(Connection connection) {
+	public void sendRequest(RequestMessage requestMessage) throws IOException, InterruptedException {
 		Server server = strategy.getServer(servers);
-		server.openConnection(connection);
-		
+
 		Log.add("[Selected Server] " + server.getName());
-		
+
+		int responseCode = Client.sendRequest(requestMessage, server.getUrl());
+
+		Log.add("[Response Code] " + responseCode);
+
 		if (! activeServers.contains(server)) {
 			activeServers.add(server);
-			Log.add("[" + server.getName() + "] is now active.");
-		}
-		
-		else {
-			Log.add("[" + server.getName() + "] is already active.");
 		}
 	}
 }

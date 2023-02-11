@@ -1,39 +1,36 @@
 package com.goslingjones.starlancer.examples;
 
-import java.util.List;
+import java.io.IOException;
 
 import com.goslingjones.starlancer.Balancer;
-import com.goslingjones.starlancer.Connection;
 import com.goslingjones.starlancer.Server;
 import com.goslingjones.starlancer.authentication.UsernameAndPassword;
+import com.goslingjones.starlancer.messages.request.RequestMessage;
+import com.goslingjones.starlancer.messages.request.RequestMethod;
 import com.goslingjones.starlancer.strategy.RandomStrategy;
 
 public class RandomConnectionExample {
 	
 	static Server[] servers = {
-			new Server("Server A", "192.168.15.6", 80),
-			new Server("Server B", "192.168.15.7", 80),
-			new Server("Server C", "192.168.15.8", 80)
+			new Server("<SERVER_NAME>", "<URL>"),
+			new Server("<SERVER_NAME>", "<URL>"),
+			new Server("<SERVER_NAME>", "<URL>")
 	};
 	
-	static RandomStrategy randomStrategy = new RandomStrategy();
+	static int numberOfMessages = 10;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException, InterruptedException {
 		
 		/* Create a Random Strategy Balancer */
-		Balancer balancer = new Balancer(randomStrategy, servers);
+		Balancer balancer = new Balancer(new RandomStrategy(), servers);
 		
-		/* Create a default connection using username and password */
-		Connection defaultConnection = new Connection(
-				new UsernameAndPassword(
-						"default-user",
-						"default-password"
-			)
-		);
+		/* Create a default request message using username and password */
+		RequestMessage requestMessage = new RequestMessage(new UsernameAndPassword("default-user", "default-password"), RequestMethod.GET);
 		
-		balancer.openConnection(defaultConnection);
-		balancer.openConnection(defaultConnection);
-		balancer.openConnection(defaultConnection);
+		/* Send a couple of requests through the balancer */
+		for (int i = 0; i < numberOfMessages; i++) {
+			balancer.sendRequest(requestMessage);
+		}
 	}
 
 }
